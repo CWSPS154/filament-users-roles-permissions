@@ -1,0 +1,42 @@
+{
+    "name": "cwsps154/filament-users-roles-permissions",
+    "description": "Filament User & Roles & Permissions",
+    "version": "0.0.1",
+    "keywords": [
+        "cwsps154",
+        "laravel",
+        "filament",
+        "filament-packages",
+        "filament-plugins",
+        "filament-users-roles-permissions"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "CWSPS154\\FilamentUsersRolesPermissions\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "CWSPS154",
+            "email": "codewithsps154@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": "^8.2",
+        "codewithdennis/filament-select-tree": "^3.1",
+        "filament/filament": "^3.2",
+        "ysfkaya/filament-phone-input": "^2.3",
+        "spatie/laravel-package-tools": "^1.15.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "CWSPS154\\FilamentUsersRolesPermissions\\FilamentUsersRolesPermissionsServiceProvider"
+            ]
+        }
+    }
+}
