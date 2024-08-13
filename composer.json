@@ -14,7 +14,8 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "CWSPS154\\FilamentUsersRolesPermissions\\": "src/"
+            "CWSPS154\\FilamentUsersRolesPermissions\\": "src/",
+            "CWSPS154\\FilamentUsersRolesPermissions\\Database\\Seeders\\": "database/seeders/"
         }
     },
     "authors": [

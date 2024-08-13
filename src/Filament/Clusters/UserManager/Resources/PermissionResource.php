@@ -7,11 +7,11 @@
 
 namespace CWSPS154\FilamentUsersRolesPermissions\Filament\Clusters\UserManager\Resources;
 
-use App\Rules\RouteHas;
 use CWSPS154\FilamentUsersRolesPermissions\Exports\PermissionExporter;
 use CWSPS154\FilamentUsersRolesPermissions\Filament\Clusters\UserManager;
 use CWSPS154\FilamentUsersRolesPermissions\Filament\Clusters\UserManager\Resources\PermissionResource\Pages\ManagePermissions;
 use CWSPS154\FilamentUsersRolesPermissions\Models\Permission;
+use CWSPS154\FilamentUsersRolesPermissions\Rules\RouteHas;
 use Filament\Forms;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Form;

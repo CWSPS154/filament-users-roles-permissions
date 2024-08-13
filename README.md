@@ -36,6 +36,24 @@ And the `User` model should `implements` these `interfaces`'s `Spatie\MediaLibra
 ```
 implements HasMedia, HasAvatar, FilamentUser
 ```
+And you can run our seeder to set the default data
+
+```
+php artisan db:seed --class="CWSPS154\FilamentUsersRolesPermissions\Database\Seeders\DatabaseSeeder"
+```
+
+This will execute all three seeder which we have
+
+```
+PermissionSeeder::class
+RoleSeeder::class
+UserSeeder::class
+```
+
+You can run any of them manually also.
+
+By default, you will get the user which have `email` `admin@gmail.com` & `password` `admin@123`.
+
 Use this middleware in your `authMiddleware([])` section
 ```
 HaveAccess::class,
