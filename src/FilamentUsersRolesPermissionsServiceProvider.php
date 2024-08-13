@@ -9,6 +9,10 @@ declare(strict_types=1);
 
 namespace CWSPS154\FilamentUsersRolesPermissions;
 
+use App\Models\User;
+use CWSPS154\FilamentUsersRolesPermissions\Models\Permission;
+use CWSPS154\FilamentUsersRolesPermissions\Models\RolePermission;
+use Illuminate\Support\Facades\Gate;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -45,5 +49,27 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
                     })
                     ->askToStarRepoOnGitHub('CWSPS154/filament-app-settings.git');
             });
+    }
+
+    public function boot(): FilamentUsersRolesPermissionsServiceProvider
+    {
+        Gate::define('have-access', function (User $user, string|array $identifiers = null) {
+            if ($user->is_admin || ($user->role_id && $user->role->all_permission)) {
+                return true;
+            }
+            if (!is_array($identifiers)) {
+                $identifiers = explode(',', $identifiers);
+            }
+            $permissions = Permission::whereIn('identifier', $identifiers)
+                ->where('status', true)
+                ->pluck('id');
+            if ($permissions && !RolePermission::where('role_id', $user->role_id)
+                    ->whereIn('permission_id', $permissions)
+                    ->exists()) {
+                return false;
+            }
+            return true;
+        });
+        return parent::boot();
     }
 }
