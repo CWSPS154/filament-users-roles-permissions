@@ -44,6 +44,6 @@ return [
     'permission.resource.table.created.at' => 'Created At',
     'permission.resource.table.updated.at' => 'Updated At',
     'have-access-page' => 'You don\'t have permission to access this page.',
-    'is-active' => 'Your account is not active now.',
+    'is.active' => 'Your account is not active now.',
     'unique-route' => 'There no :attribute exist with this :value'
 ];
