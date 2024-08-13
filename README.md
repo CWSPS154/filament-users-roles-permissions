@@ -36,6 +36,48 @@ And the `User` model should `implements` these `interfaces`'s `Spatie\MediaLibra
 ```
 implements HasMedia, HasAvatar, FilamentUser
 ```
+Also don't forget add these in you User model
+```
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'name',
+        'email',
+        'mobile',
+        'password',
+        'role_id',
+        'last_seen',
+        'is_active'
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'last_seen' => 'datetime',
+            'is_active' => 'boolean',
+        ];
+    }
+```
 And you can run our seeder to set the default data
 
 ```
