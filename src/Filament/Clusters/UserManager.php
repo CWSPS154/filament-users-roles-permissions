@@ -50,7 +50,6 @@ class UserManager extends Cluster
     {
         $plugin = Filament::getCurrentPanel()?->getPlugin(FilamentUsersRolesPermissionsServiceProvider::$name);
         $access = $plugin->$method();
-
         if (!empty($access) && is_array($access) && isset($access['ability'], $access['arguments'])) {
             return Gate::allows($access['ability'], $access['arguments']);
         }

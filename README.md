@@ -36,7 +36,13 @@ And the `User` model should `implements` these `interfaces`'s `Spatie\MediaLibra
 ```
 implements HasMedia, HasAvatar, FilamentUser
 ```
-You will get some customization on this
+Use this middleware in your `authMiddleware([])` section
+```
+HaveAccess::class,
+IsActive::class,
+IsOnline::class,
+```
+You can restrict the access of each Menu By applying any of the `Gate::define` `ability` and `arguments` or you can pass `true/false` or any `Closure`
 ```
 FilamentUsersRolesPermissionsPlugin::make()
                         ->canViewAnyUser('have-access', 'view-user')
@@ -52,7 +58,20 @@ FilamentUsersRolesPermissionsPlugin::make()
                         ->canEditPermission('have-access', 'edit-permission')
                         ->canDeletePermission('have-access', 'delete-permission'),
 ```
-Also, you can give bulk permission using `canAccess()` method.
+Behind hoods, we're using one Gate 'have-access' ,here it will check the current user have the role which have the permission.
+
+```
+Gate::allows('have-access', '<the identifer from the permission>')
+```
+
+Note: For the user which is_admin user have all permission by default. 
+
+While Creating the permission there is field for `route`, you can put the `route name` if the permission have it, otherwise make it blank.
+
+```
+php artisan route:list
+```
+This will show you all the route's name.
 
 You can publish the config file `filament-users-roles-permissions.php`, by running this command
 
@@ -102,26 +121,31 @@ which contains these settings
     ]
 ];
 ```
-Use this middleware in your `authMiddleware([])` section
-```
-HaveAccess::class,
-IsActive::class,
-IsOnline::class,
-```
 
 ## Screenshots
 
 ![App Screenshot](screenshorts/user-list.png)
+
 ![App Screenshot](screenshorts/user-create.png)
+
 ![App Screenshot](screenshorts/user-edit.png)
+
 ![App Screenshot](screenshorts/edit-profile.png)
+
 ![App Screenshot](screenshorts/role-list.png)
+
 ![App Screenshot](screenshorts/role-create.png)
+
 ![App Screenshot](screenshorts/role-edit.png)
+
 ![App Screenshot](screenshorts/permission-list.png)
+
 ![App Screenshot](screenshorts/permission-create.png)
+
 ![App Screenshot](screenshorts/permission-edit.png)
+
 ![App Screenshot](screenshorts/permission-edit.png)
+
 ![App Screenshot](screenshorts/permission-view.png)
 
 

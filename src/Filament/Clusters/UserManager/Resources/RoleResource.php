@@ -162,11 +162,6 @@ class RoleResource extends Resource
         return config('filament-users-roles-permissions.user_manager.role_resource.navigation.sort');
     }
 
-    public static function canAccess(): bool
-    {
-        return UserManager::checkAccess('getCanAccess');
-    }
-
     public static function canViewAny(): bool
     {
         return UserManager::checkAccess('getCanViewAnyRole');

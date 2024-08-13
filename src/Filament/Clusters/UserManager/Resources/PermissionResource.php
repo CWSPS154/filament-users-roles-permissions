@@ -207,11 +207,6 @@ class PermissionResource extends Resource
         return config('filament-users-roles-permissions.user_manager.permission_resource.navigation.sort');
     }
 
-    public static function canAccess(): bool
-    {
-        return UserManager::checkAccess('getCanAccess');
-    }
-
     public static function canViewAny(): bool
     {
         return UserManager::checkAccess('getCanViewAnyPermission');
@@ -219,16 +214,16 @@ class PermissionResource extends Resource
 
     public static function canCreate(): bool
     {
-        return UserManager::checkAccess('getCanCreatePermission');
+        return UserManager::checkAccess('getCanCreatePermission') ? auth()->user()->is_admin : false;
     }
 
     public static function canEdit(Model $record): bool
     {
-        return UserManager::checkAccess('getCanEditPermission', $record);
+        return UserManager::checkAccess('getCanEditPermission', $record) ? auth()->user()->is_admin : false;
     }
 
     public static function canDelete(Model $record): bool
     {
-        return UserManager::checkAccess('getCanDeletePermission', $record);
+        return UserManager::checkAccess('getCanDeletePermission', $record) ? auth()->user()->is_admin : false;
     }
 }
