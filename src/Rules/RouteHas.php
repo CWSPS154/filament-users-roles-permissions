@@ -22,7 +22,7 @@ class RouteHas implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if (!Route::has($value)) {
-            $fail(__('filament-users-roles-permissions::users-roles-permissions.unique-route', $value));
+            $fail(__('filament-users-roles-permissions::users-roles-permissions.unique-route', ['value' => $value]));
         }
     }
 }
