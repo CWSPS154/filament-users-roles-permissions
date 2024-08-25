@@ -33,6 +33,7 @@
         "ysfkaya/filament-phone-input": "^2.3",
         "joshembling/image-optimizer": "^1.4",
         "wildside/userstamps": "^2.4",
+        "filament/spatie-laravel-media-library-plugin": "^3.2",
         "spatie/laravel-package-tools": "^1.15.0"
     },
     "extra": {
