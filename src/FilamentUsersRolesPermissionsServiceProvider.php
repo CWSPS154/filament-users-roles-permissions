@@ -55,7 +55,7 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
                         }
                         $command->info('I hope this package will help you to build user management system');
                     })
-                    ->askToStarRepoOnGitHub('CWSPS154/filament-app-settings.git');
+                    ->askToStarRepoOnGitHub('CWSPS154/filament-users-roles-permissions');
             });
     }
 
