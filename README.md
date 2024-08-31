@@ -78,21 +78,6 @@ Also don't forget add these in you User model
         ];
     }
 ```
-And you can run our seeder to set the default data
-
-```
-php artisan db:seed --class="CWSPS154\FilamentUsersRolesPermissions\Database\Seeders\DatabaseSeeder"
-```
-
-This will execute all three seeder which we have
-
-```
-PermissionSeeder::class
-RoleSeeder::class
-UserSeeder::class
-```
-
-You can run any of them manually also.
 
 By default, you will get the user which have `email` `admin@gmail.com` & `password` `admin@123`.
 

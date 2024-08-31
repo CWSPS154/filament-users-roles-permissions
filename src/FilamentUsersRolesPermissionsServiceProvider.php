@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace CWSPS154\FilamentUsersRolesPermissions;
 
 use App\Models\User;
+use CWSPS154\FilamentUsersRolesPermissions\Database\Seeders\DatabaseSeeder;
 use CWSPS154\FilamentUsersRolesPermissions\Models\Permission;
 use CWSPS154\FilamentUsersRolesPermissions\Models\RolePermission;
 use Illuminate\Support\Facades\Gate;
@@ -45,6 +46,13 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
                     ->publishMigrations()
                     ->askToRunMigrations()
                     ->endWith(function (InstallCommand $command) {
+                        if ($command->confirm('Do you wish to run the seeder ?')) {
+                            $command->comment('The seeder is filled with "admin" as panel id, please check the route name for your panel');
+                            $command->comment('Running seeder...');
+                            $command->call('db:seed', [
+                                'class' => DatabaseSeeder::class
+                            ]);
+                        }
                         $command->info('I hope this package will help you to build user management system');
                     })
                     ->askToStarRepoOnGitHub('CWSPS154/filament-app-settings.git');
