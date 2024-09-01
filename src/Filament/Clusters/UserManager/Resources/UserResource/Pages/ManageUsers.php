@@ -10,6 +10,7 @@ namespace CWSPS154\FilamentUsersRolesPermissions\Filament\Clusters\UserManager\R
 use CWSPS154\FilamentUsersRolesPermissions\Filament\Clusters\UserManager\Resources\UserResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
+use Illuminate\Contracts\Support\Htmlable;
 
 class ManageUsers extends ManageRecords
 {
@@ -20,5 +21,10 @@ class ManageUsers extends ManageRecords
         return [
             Actions\CreateAction::make(),
         ];
+    }
+
+    public function getTitle(): string|Htmlable
+    {
+        return __(config('filament-users-roles-permissions.user_manager.user_resource.navigation.title'));
     }
 }

@@ -31,6 +31,14 @@ class UserManager extends Cluster
         return __(config('filament-users-roles-permissions.user_manager.navigation.label'));
     }
 
+    /**
+     * @return string|null
+     */
+    public static function getClusterBreadcrumb(): ?string
+    {
+        return __(config('filament-users-roles-permissions.user_manager.navigation.title'));
+    }
+
     public static function getNavigationIcon(): string|Htmlable|null
     {
         return config('filament-users-roles-permissions.user_manager.navigation.icon');

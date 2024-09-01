@@ -9,6 +9,7 @@ return [
     'user_manager' => [
         'layout' => null,
         'navigation' => [
+            'title' => 'filament-users-roles-permissions::users-roles-permissions.user.manager',
             'group' => 'filament-users-roles-permissions::users-roles-permissions.system',
             'label' => 'filament-users-roles-permissions::users-roles-permissions.user.manager',
             'icon' => 'heroicon-o-user-group',
@@ -17,6 +18,7 @@ return [
         'user_resource' => [
             'layout' => null,
             'navigation' => [
+                'title' => 'filament-users-roles-permissions::users-roles-permissions.user.resource.user.title',
                 'group' => null,
                 'label' => 'filament-users-roles-permissions::users-roles-permissions.user.resource.user',
                 'icon' => 'heroicon-o-users',
@@ -26,6 +28,7 @@ return [
         'role_resource' => [
             'layout' => null,
             'navigation' => [
+                'title' => 'filament-users-roles-permissions::users-roles-permissions.role.resource.role.title',
                 'group' => null,
                 'label' => 'filament-users-roles-permissions::users-roles-permissions.role.resource.role',
                 'icon' => 'heroicon-o-academic-cap',
@@ -35,6 +38,7 @@ return [
         'permission_resource' => [
             'layout' => null,
             'navigation' => [
+                'title' => 'filament-users-roles-permissions::users-roles-permissions.permission.resource.permission.title',
                 'group' => null,
                 'label' => 'filament-users-roles-permissions::users-roles-permissions.permission.resource.permission',
                 'icon' => 'heroicon-o-finger-print',

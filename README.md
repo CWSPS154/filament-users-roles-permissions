@@ -127,10 +127,11 @@ php artisan vendor:publish --tag=filament-users-roles-permissions-config
 which contains these settings
 
 ```
-[
+return [
     'user_manager' => [
         'layout' => null,
         'navigation' => [
+            'title' => 'filament-users-roles-permissions::users-roles-permissions.user.manager',
             'group' => 'filament-users-roles-permissions::users-roles-permissions.system',
             'label' => 'filament-users-roles-permissions::users-roles-permissions.user.manager',
             'icon' => 'heroicon-o-user-group',
@@ -139,6 +140,7 @@ which contains these settings
         'user_resource' => [
             'layout' => null,
             'navigation' => [
+                'title' => 'filament-users-roles-permissions::users-roles-permissions.user.resource.user.title',
                 'group' => null,
                 'label' => 'filament-users-roles-permissions::users-roles-permissions.user.resource.user',
                 'icon' => 'heroicon-o-users',
@@ -148,6 +150,7 @@ which contains these settings
         'role_resource' => [
             'layout' => null,
             'navigation' => [
+                'title' => 'filament-users-roles-permissions::users-roles-permissions.role.resource.role.title',
                 'group' => null,
                 'label' => 'filament-users-roles-permissions::users-roles-permissions.role.resource.role',
                 'icon' => 'heroicon-o-academic-cap',
@@ -157,6 +160,7 @@ which contains these settings
         'permission_resource' => [
             'layout' => null,
             'navigation' => [
+                'title' => 'filament-users-roles-permissions::users-roles-permissions.permission.resource.permission.title',
                 'group' => null,
                 'label' => 'filament-users-roles-permissions::users-roles-permissions.permission.resource.permission',
                 'icon' => 'heroicon-o-finger-print',
