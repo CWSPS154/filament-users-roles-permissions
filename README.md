@@ -8,16 +8,10 @@ Install Using Composer
 
 ```
 composer require cwsps154/filament-users-roles-permissions
-
 ```
 In this package we use [Laravel-medialibrary](https://spatie.be/docs/laravel-medialibrary/v10/introduction) package for profile image, so you have to publish it migrations file
 ```
 php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="migrations"
-```
-Run
-
-```
-php artisan filament-users-roles-permissions:install
 ```
 
 ## Usage/Examples
@@ -77,6 +71,11 @@ Also don't forget add these in you User model
             'is_active' => 'boolean',
         ];
     }
+```
+Run
+
+```
+php artisan filament-users-roles-permissions:install
 ```
 
 By default, you will get the user which have `email` `admin@gmail.com` & `password` `admin@123`.
