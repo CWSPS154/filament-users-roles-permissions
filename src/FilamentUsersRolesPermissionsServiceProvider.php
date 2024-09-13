@@ -97,14 +97,22 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
      */
     protected function addTraitToModel(string $modelContent, InstallCommand $command): string
     {
-        $traitToAdd = 'use \CWSPS154\FilamentUsersRolesPermissions\Models\HasRole;';
-        if (!str_contains($modelContent, $traitToAdd)) {
+        $traitClass = 'use CWSPS154\FilamentUsersRolesPermissions\Models\HasRole;';
+        $trait = 'use HasRole;';
+        if (!str_contains($modelContent, $traitClass)) {
             $modelContent = preg_replace(
-                '/class\s+[^;]+;/',
-                "$0\n\n$traitToAdd",
+                '/namespace\s+[^;]+;/',
+                "$0\n\n$traitClass",
                 $modelContent
             );
-            $command->info('Trait added successfully.');
+            if (!str_contains($modelContent, $trait)) {
+                $modelContent = preg_replace(
+                    '/class\s+[^;]+;/',
+                    "$0\n\n$trait",
+                    $modelContent
+                );
+                $command->info('Trait added successfully.');
+            }
         } else {
             $command->info('Trait already exists.');
         }
@@ -118,16 +126,39 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
      */
     protected function addInterfacesToModel(string $modelContent, InstallCommand $command): string
     {
-        $interfacesToAdd = 'implements \Spatie\MediaLibrary\HasMedia, \Filament\Models\Contracts\HasAvatar, \Filament\Models\Contracts\FilamentUser \Illuminate\Contracts\Auth\MustVerifyEmail';
-        if (!preg_match('/class\s+User\s+implements/', $modelContent)) {
+        // Define the interfaces to add
+        $interfaces = [
+            '\Spatie\MediaLibrary\HasMedia',
+            '\Filament\Models\Contracts\HasAvatar',
+            '\Filament\Models\Contracts\FilamentUser',
+            '\Illuminate\Contracts\Auth\MustVerifyEmail',
+        ];
+
+        $interfacesToAdd = implode(', ', $interfaces);
+
+        if (preg_match('/class\s+User\s+extends\s+\w+(\s+implements\s+([^\{]+))?/', $modelContent, $matches)) {
+            $existingInterfaces = $matches[2] ?? '';
+            $existingInterfacesArray = array_map('trim', explode(',', $existingInterfaces));
+            $existingInterfacesArray = array_filter($existingInterfacesArray);
+            $newInterfacesArray = array_diff($interfaces, $existingInterfacesArray);
+            if (!empty($newInterfacesArray)) {
+                $newInterfacesString = implode(', ', array_merge($existingInterfacesArray, $newInterfacesArray));
+                $modelContent = preg_replace(
+                    '/class\s+User\s+extends\s+\w+(\s+implements\s+[^\{]*)?/',
+                    "class User extends UserParent implements $newInterfacesString {",
+                    $modelContent
+                );
+                $command->info('Interfaces added successfully.');
+            } else {
+                $command->info('Interfaces already exist.');
+            }
+        } else {
             $modelContent = preg_replace(
                 '/class\s+User\s+extends\s+\w+/',
-                "$0 $interfacesToAdd",
+                "class User extends UserParent implements $interfacesToAdd {",
                 $modelContent
             );
             $command->info('Interfaces added successfully.');
-        } else {
-            $command->info('Interfaces already exist.');
         }
         return $modelContent;
     }
