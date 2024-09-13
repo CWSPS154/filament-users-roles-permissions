@@ -143,7 +143,7 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
                 $newInterfacesString = implode(', ', array_merge($existingInterfacesArray, $newInterfacesArray));
                 $modelContent = preg_replace(
                     '/class\s+User\s+extends\s+\w+(\s+implements\s+[^\{]*)?/',
-                    "class User extends Authenticatable implements $newInterfacesString {",
+                    "class User extends Authenticatable implements $newInterfacesString",
                     $modelContent
                 );
                 $command->info('Interfaces added successfully.');
@@ -153,7 +153,7 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
         } else {
             $modelContent = preg_replace(
                 '/class\s+User\s+extends\s+\w+/',
-                "class User extends Authenticatable implements $interfacesToAdd {",
+                "class User extends Authenticatable implements $interfacesToAdd",
                 $modelContent
             );
             $command->info('Interfaces added successfully.');
