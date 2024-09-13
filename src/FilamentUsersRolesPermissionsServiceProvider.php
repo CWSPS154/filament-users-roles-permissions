@@ -16,6 +16,7 @@ use CWSPS154\FilamentUsersRolesPermissions\Models\Permission;
 use CWSPS154\FilamentUsersRolesPermissions\Models\RolePermission;
 use ErlandMuchasaj\LaravelGzip\Middleware\GzipEncodeResponse;
 use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
@@ -49,6 +50,7 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
                         $command->call('vendor:publish', [
                             '--provider' => MediaLibraryServiceProvider::class
                         ]);
+                        $this->addTraitAndInterfaceToUser($command);
                     })
                     ->publishConfigFile()
                     ->publishMigrations()
@@ -65,6 +67,43 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
                     })
                     ->askToStarRepoOnGitHub('CWSPS154/filament-users-roles-permissions');
             });
+    }
+
+    protected function addTraitAndInterfaceToUser(InstallCommand $command): void
+    {
+        $userModelPath = app_path('Models/User.php');
+        if (!File::exists($userModelPath)) {
+            $command->error('User model not found!');
+            return;
+        }
+        $modelContent = File::get($userModelPath);
+
+        $traitToAdd = 'use \CWSPS154\FilamentUsersRolesPermissions\Models\HasRole;';
+        $interfacesToAdd = 'implements \Spatie\MediaLibrary\HasMedia, \Filament\Models\Contracts\HasAvatar, \Filament\Models\Contracts\FilamentUser';
+
+        if (!str_contains($modelContent, $traitToAdd)) {
+            $modelContent = preg_replace(
+                '/namespace.+;/',
+                "$0\n\n$traitToAdd",
+                $modelContent
+            );
+            $command->info('Trait added successfully.');
+        } else {
+            $command->info('Trait already exists.');
+        }
+
+        if (!preg_match('/class\s+User\s+implements/', $modelContent)) {
+            $modelContent = preg_replace(
+                '/class\s+User\s+extends\s+\w+/',
+                "$0 $interfacesToAdd",
+                $modelContent
+            );
+            $command->info('Interfaces added successfully.');
+        } else {
+            $command->info('Interfaces already exist.');
+        }
+        File::put($userModelPath, $modelContent);
+        $command->info('User model updated successfully.');
     }
 
     /**
