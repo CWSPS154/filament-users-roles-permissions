@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Gate;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Spatie\MediaLibrary\MediaLibraryServiceProvider;
 
 class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvider
 {
@@ -49,6 +50,11 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
                     ->publishMigrations()
                     ->askToRunMigrations()
                     ->endWith(function (InstallCommand $command) {
+                        if ($command->confirm('Do you wish to publish spatie media provider ?')) {
+                            $command->call('vendor:publish', [
+                                'provider' => MediaLibraryServiceProvider::class
+                            ]);
+                        }
                         if ($command->confirm('Do you wish to run the seeder ?')) {
                             $command->comment('The seeder is filled with "admin" as panel id, please check the route name for your panel');
                             $command->comment('Running seeder...');

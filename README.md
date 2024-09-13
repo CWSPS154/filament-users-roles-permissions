@@ -9,11 +9,8 @@ Install Using Composer
 ```
 composer require cwsps154/filament-users-roles-permissions
 ```
-In this package we use [Laravel-medialibrary](https://spatie.be/docs/laravel-medialibrary/v10/introduction) package for profile image, so you have to publish it migrations file
+In this package we use [Laravel-medialibrary](https://spatie.be/docs/laravel-medialibrary/v10/introduction) package for profile image
 ```
-php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="migrations"
-```
-
 ## Usage/Examples
 
 Add this into your Filament `PannelProvider` class `panel()`
@@ -24,9 +21,7 @@ Add the `CWSPS154\FilamentUsersRolesPermissions\Models\HasRole` `trait` in `User
 ```
 use HasRole;
 ```
-
 And the `User` model should `implements` these `interfaces`'s `Spatie\MediaLibrary\HasMedia`, `Filament\Models\Contracts\HasAvatar` and `Filament\Models\Contracts\FilamentUser`
-
 ```
 implements HasMedia, HasAvatar, FilamentUser
 ```
