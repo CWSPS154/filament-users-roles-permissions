@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace CWSPS154\FilamentUsersRolesPermissions\Models;
 
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -51,5 +52,11 @@ trait HasRole
     public function isOnline(): bool
     {
         return Cache::has('user-is-online.' . $this->id);
+    }
+
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return true;
     }
 }
