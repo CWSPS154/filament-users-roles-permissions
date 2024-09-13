@@ -45,15 +45,15 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
                 $command
                     ->startWith(function (InstallCommand $command) {
                         $command->info('Hi Mate, Thank you for installing My Package!');
+                        $command->comment('Publishing spatie media provider...');
+                        $command->call('vendor:publish', [
+                            'provider' => MediaLibraryServiceProvider::class
+                        ]);
                     })
                     ->publishConfigFile()
                     ->publishMigrations()
+                    ->askToRunMigrations()
                     ->endWith(function (InstallCommand $command) {
-                        if ($command->confirm('Do you wish to publish spatie media provider ?')) {
-                            $command->call('vendor:publish', [
-                                'provider' => MediaLibraryServiceProvider::class
-                            ]);
-                        }
                         if ($command->confirm('Do you wish to run the seeder ?')) {
                             $command->comment('The seeder is filled with "admin" as panel id, please check the route name for your panel');
                             $command->comment('Running seeder...');
@@ -63,7 +63,6 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
                         }
                         $command->info('I hope this package will help you to build user management system');
                     })
-                    ->askToRunMigrations()
                     ->askToStarRepoOnGitHub('CWSPS154/filament-users-roles-permissions');
             });
     }
