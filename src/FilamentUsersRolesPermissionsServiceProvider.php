@@ -47,7 +47,7 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
                         $command->info('Hi Mate, Thank you for installing Filament Users Roles Permissions.!');
                         $command->comment('Publishing spatie media provider...');
                         $command->call('vendor:publish', [
-                            'provider' => MediaLibraryServiceProvider::class
+                            '--provider' => MediaLibraryServiceProvider::class
                         ]);
                     })
                     ->publishConfigFile()
