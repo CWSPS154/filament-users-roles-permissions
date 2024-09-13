@@ -102,13 +102,13 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
         if (!str_contains($modelContent, $traitClass)) {
             $modelContent = preg_replace(
                 '/namespace\s+[^;]+;/',
-                "$0\n\n$traitClass",
+                "$0\n\n.'       '.$traitClass",
                 $modelContent
             );
             if (!str_contains($modelContent, $trait)) {
                 $modelContent = preg_replace(
                     '/class\s+[^;]+;/',
-                    "$0\n\n$trait",
+                    "$0\n\n.'       '.$trait",
                     $modelContent
                 );
                 $command->info('Trait added successfully.');
@@ -169,21 +169,21 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
     protected function updateFillable(string $modelContent, InstallCommand $command): string
     {
         $newFillable = <<<EOT
-                /**
-                 * The attributes that are mass assignable.
-                 *
-                 * @var array<int, string>
-                 */
-                protected \$fillable = [
-                    'name',
-                    'email',
-                    'mobile',
-                    'password',
-                    'role_id',
-                    'last_seen',
-                    'is_active'
-                ];
-                EOT;
+        /**
+        * The attributes that are mass assignable.
+        *
+        * @var array<int, string>
+        */
+        protected \$fillable = [
+               'name',
+               'email',
+               'mobile',
+               'password',
+               'role_id',
+               'last_seen',
+               'is_active'
+        ];
+        EOT;
 
         $modelContent = preg_replace(
             '/\/\*\*\s+\*\sThe attributes that are mass assignable\..+?protected\s+\$fillable\s+=\s+\[.*?\];/s',
@@ -202,16 +202,16 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
     protected function updateHidden(string $modelContent, InstallCommand $command): string
     {
         $newHidden = <<<EOT
-                /**
-                 * The attributes that should be hidden for serialization.
-                 *
-                 * @var array<int, string>
-                 */
-                protected \$hidden = [
-                    'password',
-                    'remember_token',
-                ];
-                EOT;
+        /**
+        * The attributes that should be hidden for serialization.
+        *
+        * @var array<int, string>
+        */
+        protected \$hidden = [
+               'password',
+               'remember_token',
+       ];
+       EOT;
         $modelContent = preg_replace(
             '/\/\*\*\s+\*\sThe attributes that should be hidden for serialization\..+?protected\s+\$hidden\s+=\s+\[.*?\];/s',
             $newHidden,
