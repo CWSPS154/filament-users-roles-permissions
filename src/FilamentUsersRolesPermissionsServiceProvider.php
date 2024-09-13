@@ -69,6 +69,10 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
             });
     }
 
+    /**
+     * @param InstallCommand $command
+     * @return void
+     */
     protected function addTraitAndInterfaceToUser(InstallCommand $command): void
     {
         $userModelPath = app_path('Models/User.php');
@@ -77,10 +81,23 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
             return;
         }
         $modelContent = File::get($userModelPath);
+        $modelContent = $this->addTraitToModel($modelContent, $command);
+        $modelContent = $this->addInterfacesToModel($modelContent, $command);
+        $modelContent = $this->updateFillable($modelContent, $command);
+        $modelContent = $this->updateHidden($modelContent, $command);
+        $modelContent = $this->updateCasts($modelContent, $command);
+        File::put($userModelPath, $modelContent);
+        $command->info('User model updated successfully.');
+    }
 
+    /**
+     * @param string $modelContent
+     * @param InstallCommand $command
+     * @return string
+     */
+    protected function addTraitToModel(string $modelContent, InstallCommand $command): string
+    {
         $traitToAdd = 'use \CWSPS154\FilamentUsersRolesPermissions\Models\HasRole;';
-        $interfacesToAdd = 'implements \Spatie\MediaLibrary\HasMedia, \Filament\Models\Contracts\HasAvatar, \Filament\Models\Contracts\FilamentUser';
-
         if (!str_contains($modelContent, $traitToAdd)) {
             $modelContent = preg_replace(
                 '/namespace.+;/',
@@ -91,7 +108,17 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
         } else {
             $command->info('Trait already exists.');
         }
+        return $modelContent;
+    }
 
+    /**
+     * @param string $modelContent
+     * @param InstallCommand $command
+     * @return string
+     */
+    protected function addInterfacesToModel(string $modelContent, InstallCommand $command): string
+    {
+        $interfacesToAdd = 'implements \Spatie\MediaLibrary\HasMedia, \Filament\Models\Contracts\HasAvatar, \Filament\Models\Contracts\FilamentUser';
         if (!preg_match('/class\s+User\s+implements/', $modelContent)) {
             $modelContent = preg_replace(
                 '/class\s+User\s+extends\s+\w+/',
@@ -102,9 +129,102 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
         } else {
             $command->info('Interfaces already exist.');
         }
-        File::put($userModelPath, $modelContent);
-        $command->info('User model updated successfully.');
+        return $modelContent;
     }
+
+    /**
+     * @param string $modelContent
+     * @param InstallCommand $command
+     * @return string
+     */
+    protected function updateFillable(string $modelContent, InstallCommand $command): string
+    {
+        $newFillable = <<<EOT
+                /**
+                 * The attributes that are mass assignable.
+                 *
+                 * @var array<int, string>
+                 */
+                protected \$fillable = [
+                    'name',
+                    'email',
+                    'mobile',
+                    'password',
+                    'role_id',
+                    'last_seen',
+                    'is_active'
+                ];
+                EOT;
+
+        $modelContent = preg_replace(
+            '/\/\*\*\s+\*\sThe attributes that are mass assignable\..+?protected\s+\$fillable\s+=\s+\[.*?\];/s',
+            $newFillable,
+            $modelContent
+        );
+        $command->info('Fillable updated successfully.');
+        return $modelContent;
+    }
+
+    /**
+     * @param string $modelContent
+     * @param InstallCommand $command
+     * @return string
+     */
+    protected function updateHidden(string $modelContent, InstallCommand $command): string
+    {
+        $newHidden = <<<EOT
+                /**
+                 * The attributes that should be hidden for serialization.
+                 *
+                 * @var array<int, string>
+                 */
+                protected \$hidden = [
+                    'password',
+                    'remember_token',
+                ];
+                EOT;
+        $modelContent = preg_replace(
+            '/\/\*\*\s+\*\sThe attributes that should be hidden for serialization\..+?protected\s+\$hidden\s+=\s+\[.*?\];/s',
+            $newHidden,
+            $modelContent
+        );
+        $command->info('Hidden attributes updated successfully.');
+        return $modelContent;
+    }
+
+
+    /**
+     * @param string $modelContent
+     * @param InstallCommand $command
+     * @return string
+     */
+    protected function updateCasts(string $modelContent, InstallCommand $command): string
+    {
+        $newCasts = <<<EOT
+        /**
+         * Get the attributes that should be cast.
+         *
+         * @return array<string, string>
+         */
+        protected function casts(): array
+        {
+            return [
+                'email_verified_at' => 'datetime',
+                'password' => 'hashed',
+                'last_seen' => 'datetime',
+                'is_active' => 'boolean',
+            ];
+        }
+        EOT;
+        $modelContent = preg_replace(
+            '/\/\*\*\s+\*\sGet the attributes that should be cast\..+?protected\s+function\s+casts\(\):\s+array\s+\{.*?\};/s',
+            $newCasts,
+            $modelContent
+        );
+        $command->info('Casts updated successfully.');
+        return $modelContent;
+    }
+
 
     /**
      * @return FilamentUsersRolesPermissionsServiceProvider
