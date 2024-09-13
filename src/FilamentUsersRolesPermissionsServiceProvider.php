@@ -100,7 +100,7 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
         $traitToAdd = 'use \CWSPS154\FilamentUsersRolesPermissions\Models\HasRole;';
         if (!str_contains($modelContent, $traitToAdd)) {
             $modelContent = preg_replace(
-                '/namespace\s+[^;]+;/',
+                '/class\s+[^;]+;/',
                 "$0\n\n$traitToAdd",
                 $modelContent
             );
