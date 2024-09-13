@@ -11,8 +11,11 @@ namespace CWSPS154\FilamentUsersRolesPermissions;
 
 use App\Models\User;
 use CWSPS154\FilamentUsersRolesPermissions\Database\Seeders\DatabaseSeeder;
+use CWSPS154\FilamentUsersRolesPermissions\Http\Middleware\HaveAccess;
 use CWSPS154\FilamentUsersRolesPermissions\Models\Permission;
 use CWSPS154\FilamentUsersRolesPermissions\Models\RolePermission;
+use ErlandMuchasaj\LaravelGzip\Middleware\GzipEncodeResponse;
+use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\Facades\Gate;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
@@ -59,8 +62,12 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
             });
     }
 
+    /**
+     * @return FilamentUsersRolesPermissionsServiceProvider
+     */
     public function boot(): FilamentUsersRolesPermissionsServiceProvider
     {
+        $this->configureMiddleware();
         Gate::define('have-access', function (User $user, string|array $identifiers = null) {
             if ($user->is_admin || ($user->role_id && $user->role->all_permission)) {
                 return true;
@@ -79,5 +86,19 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
             return true;
         });
         return parent::boot();
+    }
+
+    /**
+     * @return void
+     */
+    protected function configureMiddleware(): void
+    {
+        $this->app->booted(function () {
+            $kernel = $this->app->make(Kernel::class);
+            $kernel->appendMiddlewareToGroup('web', [
+                HaveAccess::class,
+                GzipEncodeResponse::class
+            ]);
+        });
     }
 }

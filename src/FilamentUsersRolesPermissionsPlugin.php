@@ -10,6 +10,10 @@ declare(strict_types=1);
 namespace CWSPS154\FilamentUsersRolesPermissions;
 
 use Closure;
+use CWSPS154\FilamentUsersRolesPermissions\Filament\Clusters\UserManager\Resources\UserResource\Pages\EditProfile;
+use CWSPS154\FilamentUsersRolesPermissions\Http\Middleware\HaveAccess;
+use CWSPS154\FilamentUsersRolesPermissions\Http\Middleware\IsActive;
+use CWSPS154\FilamentUsersRolesPermissions\Http\Middleware\IsOnline;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 use Filament\Support\Concerns\EvaluatesClosures;
@@ -91,9 +95,16 @@ class FilamentUsersRolesPermissionsPlugin implements Plugin
     public function register(Panel $panel): void
     {
         $panel->discoverClusters(
-            in: __DIR__.'/Filament/Clusters',
+            in: __DIR__ . '/Filament/Clusters',
             for: 'CWSPS154\\FilamentUsersRolesPermissions\\Filament\\Clusters'
-        );
+        )->profile(EditProfile::class, false)
+            ->authMiddleware(
+                [
+                    HaveAccess::class,
+                    IsActive::class,
+                    IsOnline::class,
+                ]
+            );
     }
 
     public function boot(Panel $panel): void
