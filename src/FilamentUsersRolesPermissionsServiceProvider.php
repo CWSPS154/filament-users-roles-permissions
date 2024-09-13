@@ -100,7 +100,7 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
         $traitToAdd = 'use \CWSPS154\FilamentUsersRolesPermissions\Models\HasRole;';
         if (!str_contains($modelContent, $traitToAdd)) {
             $modelContent = preg_replace(
-                '/namespace.+;/',
+                '/namespace\s+[^;]+;/',
                 "$0\n\n$traitToAdd",
                 $modelContent
             );
@@ -118,7 +118,7 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
      */
     protected function addInterfacesToModel(string $modelContent, InstallCommand $command): string
     {
-        $interfacesToAdd = 'implements \Spatie\MediaLibrary\HasMedia, \Filament\Models\Contracts\HasAvatar, \Filament\Models\Contracts\FilamentUser';
+        $interfacesToAdd = 'implements \Spatie\MediaLibrary\HasMedia, \Filament\Models\Contracts\HasAvatar, \Filament\Models\Contracts\FilamentUser \Illuminate\Contracts\Auth\MustVerifyEmail';
         if (!preg_match('/class\s+User\s+implements/', $modelContent)) {
             $modelContent = preg_replace(
                 '/class\s+User\s+extends\s+\w+/',
