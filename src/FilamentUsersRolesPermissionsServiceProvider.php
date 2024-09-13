@@ -126,7 +126,6 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
      */
     protected function addInterfacesToModel(string $modelContent, InstallCommand $command): string
     {
-        // Define the interfaces to add
         $interfaces = [
             '\Spatie\MediaLibrary\HasMedia',
             '\Filament\Models\Contracts\HasAvatar',
@@ -135,8 +134,7 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
         ];
 
         $interfacesToAdd = implode(', ', $interfaces);
-
-        if (preg_match('/class\s+User\s+extends\s+\w+(\s+implements\s+([^\{]+))?/', $modelContent, $matches)) {
+        if (preg_match('/class\s+User\s+extends\s+Authenticatable\s+\w+(\s+implements\s+([^\{]+))?/', $modelContent, $matches)) {
             $existingInterfaces = $matches[2] ?? '';
             $existingInterfacesArray = array_map('trim', explode(',', $existingInterfaces));
             $existingInterfacesArray = array_filter($existingInterfacesArray);
@@ -145,7 +143,7 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
                 $newInterfacesString = implode(', ', array_merge($existingInterfacesArray, $newInterfacesArray));
                 $modelContent = preg_replace(
                     '/class\s+User\s+extends\s+\w+(\s+implements\s+[^\{]*)?/',
-                    "class User extends UserParent implements $newInterfacesString {",
+                    "class User extends Authenticatable implements $newInterfacesString {",
                     $modelContent
                 );
                 $command->info('Interfaces added successfully.');
@@ -155,7 +153,7 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
         } else {
             $modelContent = preg_replace(
                 '/class\s+User\s+extends\s+\w+/',
-                "class User extends UserParent implements $interfacesToAdd {",
+                "class User extends Authenticatable implements $interfacesToAdd {",
                 $modelContent
             );
             $command->info('Interfaces added successfully.');
