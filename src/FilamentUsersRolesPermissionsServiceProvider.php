@@ -16,7 +16,6 @@ use CWSPS154\FilamentUsersRolesPermissions\Models\Permission;
 use CWSPS154\FilamentUsersRolesPermissions\Models\RolePermission;
 use ErlandMuchasaj\LaravelGzip\Middleware\GzipEncodeResponse;
 use Illuminate\Contracts\Http\Kernel;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
@@ -45,12 +44,17 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
             ->hasInstallCommand(function (InstallCommand $command) {
                 $command
                     ->startWith(function (InstallCommand $command) {
+                        $command->info('Hi Mate, Thank you for installing My Package!');
                         $command->info('Hi Mate, Thank you for installing Filament Users Roles Permissions.!');
                         $command->comment('Publishing spatie media provider...');
-                        $command->call('vendor:publish', [
-                            '--provider' => MediaLibraryServiceProvider::class
-                        ]);
-                        $this->addTraitAndInterfaceToUser($command);
+                        $command->call('vendor:publish', ['--provider' => MediaLibraryServiceProvider::class]);
+                        $command->comment('Now Please update your User model class with these...');
+                        $command->line('implements HasMedia, HasAvatar, FilamentUser, MustVerifyEmail');
+                        $command->line('use HasRole;');
+                        $command->line("Add these to fillable, ['mobile','role_id','last_seen','is_active']");
+                        if (!$command->confirm('Did you update the User model class?')) {
+                            $command->error('Please update your User model class otherwise this package will not work!!!');
+                        }
                     })
                     ->publishConfigFile()
                     ->publishMigrations()
@@ -69,195 +73,6 @@ class FilamentUsersRolesPermissionsServiceProvider extends PackageServiceProvide
             });
     }
 
-    /**
-     * @param InstallCommand $command
-     * @return void
-     */
-    protected function addTraitAndInterfaceToUser(InstallCommand $command): void
-    {
-        $userModelPath = app_path('Models/User.php');
-        if (!File::exists($userModelPath)) {
-            $command->error('User model not found!');
-            return;
-        }
-        $modelContent = File::get($userModelPath);
-        $modelContent = $this->addTraitToModel($modelContent, $command);
-        $modelContent = $this->addInterfacesToModel($modelContent, $command);
-        $modelContent = $this->updateFillable($modelContent, $command);
-        $modelContent = $this->updateHidden($modelContent, $command);
-        $modelContent = $this->updateCasts($modelContent, $command);
-        File::put($userModelPath, $modelContent);
-        $command->info('User model updated successfully.');
-    }
-
-    /**
-     * @param string $modelContent
-     * @param InstallCommand $command
-     * @return string
-     */
-    protected function addTraitToModel(string $modelContent, InstallCommand $command): string
-    {
-        $traitClass = 'use CWSPS154\FilamentUsersRolesPermissions\Models\HasRole;';
-        $trait = 'use HasRole;';
-        if (!str_contains($modelContent, $traitClass)) {
-            $modelContent = preg_replace(
-                '/namespace\s+[^;]+;/',
-                "$0\n\n.'       '.$traitClass",
-                $modelContent
-            );
-            if (!str_contains($modelContent, $trait)) {
-                $modelContent = preg_replace(
-                    '/class\s+[^;]+;/',
-                    "$0\n\n.'       '.$trait",
-                    $modelContent
-                );
-                $command->info('Trait added successfully.');
-            }
-        } else {
-            $command->info('Trait already exists.');
-        }
-        return $modelContent;
-    }
-
-    /**
-     * @param string $modelContent
-     * @param InstallCommand $command
-     * @return string
-     */
-    protected function addInterfacesToModel(string $modelContent, InstallCommand $command): string
-    {
-        $interfaces = [
-            '\Spatie\MediaLibrary\HasMedia',
-            '\Filament\Models\Contracts\HasAvatar',
-            '\Filament\Models\Contracts\FilamentUser',
-            '\Illuminate\Contracts\Auth\MustVerifyEmail',
-        ];
-
-        $interfacesToAdd = implode(', ', $interfaces);
-        if (preg_match('/class\s+User\s+extends\s+Authenticatable\s+\w+(\s+implements\s+([^\{]+))?/', $modelContent, $matches)) {
-            $existingInterfaces = $matches[2] ?? '';
-            $existingInterfacesArray = array_map('trim', explode(',', $existingInterfaces));
-            $existingInterfacesArray = array_filter($existingInterfacesArray);
-            $newInterfacesArray = array_diff($interfaces, $existingInterfacesArray);
-            if (!empty($newInterfacesArray)) {
-                $newInterfacesString = implode(', ', array_merge($existingInterfacesArray, $newInterfacesArray));
-                $modelContent = preg_replace(
-                    '/class\s+User\s+extends\s+\w+(\s+implements\s+[^\{]*)?/',
-                    "class User extends Authenticatable implements $newInterfacesString",
-                    $modelContent
-                );
-                $command->info('Interfaces added successfully.');
-            } else {
-                $command->info('Interfaces already exist.');
-            }
-        } else {
-            $modelContent = preg_replace(
-                '/class\s+User\s+extends\s+\w+/',
-                "class User extends Authenticatable implements $interfacesToAdd",
-                $modelContent
-            );
-            $command->info('Interfaces added successfully.');
-        }
-        return $modelContent;
-    }
-
-    /**
-     * @param string $modelContent
-     * @param InstallCommand $command
-     * @return string
-     */
-    protected function updateFillable(string $modelContent, InstallCommand $command): string
-    {
-        $newFillable = <<<EOT
-        /**
-        * The attributes that are mass assignable.
-        *
-        * @var array<int, string>
-        */
-        protected \$fillable = [
-               'name',
-               'email',
-               'mobile',
-               'password',
-               'role_id',
-               'last_seen',
-               'is_active'
-        ];
-        EOT;
-
-        $modelContent = preg_replace(
-            '/\/\*\*\s+\*\sThe attributes that are mass assignable\..+?protected\s+\$fillable\s+=\s+\[.*?\];/s',
-            $newFillable,
-            $modelContent
-        );
-        $command->info('Fillable updated successfully.');
-        return $modelContent;
-    }
-
-    /**
-     * @param string $modelContent
-     * @param InstallCommand $command
-     * @return string
-     */
-    protected function updateHidden(string $modelContent, InstallCommand $command): string
-    {
-        $newHidden = <<<EOT
-        /**
-        * The attributes that should be hidden for serialization.
-        *
-        * @var array<int, string>
-        */
-        protected \$hidden = [
-               'password',
-               'remember_token',
-       ];
-       EOT;
-        $modelContent = preg_replace(
-            '/\/\*\*\s+\*\sThe attributes that should be hidden for serialization\..+?protected\s+\$hidden\s+=\s+\[.*?\];/s',
-            $newHidden,
-            $modelContent
-        );
-        $command->info('Hidden attributes updated successfully.');
-        return $modelContent;
-    }
-
-
-    /**
-     * @param string $modelContent
-     * @param InstallCommand $command
-     * @return string
-     */
-    protected function updateCasts(string $modelContent, InstallCommand $command): string
-    {
-        $newCasts = <<<EOT
-        /**
-         * Get the attributes that should be cast.
-         *
-         * @return array<string, string>
-         */
-        protected function casts(): array
-        {
-            return [
-                'email_verified_at' => 'datetime',
-                'password' => 'hashed',
-                'last_seen' => 'datetime',
-                'is_active' => 'boolean',
-            ];
-        }
-        EOT;
-        $modelContent = preg_replace(
-            '/\/\*\*\s+\*\sGet the attributes that should be cast\..+?protected\s+function\s+casts\(\):\s+array\s+\{.*?\};/s',
-            $newCasts,
-            $modelContent
-        );
-        $command->info('Casts updated successfully.');
-        return $modelContent;
-    }
-
-
-    /**
-     * @return FilamentUsersRolesPermissionsServiceProvider
-     */
     public function boot(): FilamentUsersRolesPermissionsServiceProvider
     {
         $this->configureMiddleware();

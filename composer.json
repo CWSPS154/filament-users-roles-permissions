@@ -34,7 +34,9 @@
         "joshembling/image-optimizer": "^1.4",
         "wildside/userstamps": "^2.4",
         "filament/spatie-laravel-media-library-plugin": "^3.2",
-        "spatie/laravel-package-tools": "^1.15.0"
+        "spatie/laravel-package-tools": "^1.15.0",
+        "erlandmuchasaj/laravel-gzip": "^1.1",
+        "php-ffmpeg/php-ffmpeg": "dev-master"
     },
     "extra": {
         "laravel": {
